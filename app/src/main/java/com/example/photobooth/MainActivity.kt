@@ -3,11 +3,13 @@ package com.example.photobooth
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
@@ -63,10 +65,33 @@ class MainActivity : Activity() {
     }
     private fun uriToBitmap(uri: Uri): Bitmap? = contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
     private fun saveComposite() {
-        if (photos.any { it == null }) { status.text="Take all 3 photos first."; return }
-        val output=Bitmap.createBitmap(1800,1200,Bitmap.Config.ARGB_8888); val c=Canvas(output); c.drawColor(Color.WHITE)
-        background?.let { c.drawBitmap(it,null,Rect(0,0,1800,1200),null) }
-        slots.forEachIndexed { i,v -> val lp=v.layoutParams as FrameLayout.LayoutParams; val r=Rect((lp.leftMargin.toFloat()/canvas.width*1800).toInt(),(lp.topMargin.toFloat()/canvas.height*1200).toInt(),((lp.leftMargin+lp.width).toFloat()/canvas.width*1800).toInt(),((lp.topMargin+lp.height).toFloat()/canvas.height*1200).toInt()); c.drawBitmap(photos[i]!!,null,r,Paint(Paint.ANTI_ALIAS_FLAG)) }
-        val file=File(getExternalFilesDir(null),"PhotoBooth_${System.currentTimeMillis()}.jpg"); FileOutputStream(file).use { output.compress(Bitmap.CompressFormat.JPEG,95,it) }; status.text="Saved: ${file.name}"
+        if (photos.any { it == null }) { status.text = "Take all 3 photos first."; return }
+        val output = Bitmap.createBitmap(1800, 1200, Bitmap.Config.ARGB_8888)
+        val painter = Canvas(output)
+        painter.drawColor(Color.WHITE)
+        background?.let { painter.drawBitmap(it, null, Rect(0, 0, 1800, 1200), null) }
+        slots.forEachIndexed { i, view ->
+            val lp = view.layoutParams as FrameLayout.LayoutParams
+            val area = Rect(
+                (lp.leftMargin.toFloat() / canvas.width * 1800).toInt(),
+                (lp.topMargin.toFloat() / canvas.height * 1200).toInt(),
+                ((lp.leftMargin + lp.width).toFloat() / canvas.width * 1800).toInt(),
+                ((lp.topMargin + lp.height).toFloat() / canvas.height * 1200).toInt()
+            )
+            painter.drawBitmap(photos[i]!!, null, area, Paint(Paint.ANTI_ALIAS_FLAG))
+        }
+        val name = "PhotoBooth_${System.currentTimeMillis()}.jpg"
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, name)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Photo Booth")
+            }
+        }
+        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        if (imageUri == null) { status.text = "Could not save the image."; return }
+        contentResolver.openOutputStream(imageUri)?.use { output.compress(Bitmap.CompressFormat.JPEG, 95, it) }
+            ?: run { status.text = "Could not save the image."; return }
+        status.text = "Saved to Gallery: Pictures/Photo Booth"
     }
 }
