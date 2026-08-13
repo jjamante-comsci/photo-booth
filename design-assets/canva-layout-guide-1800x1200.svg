@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200">
+  <rect width="1800" height="1200" fill="#ffffff"/>
+  <rect x="90" y="96" width="1008" height="1008" fill="#d8eeff" stroke="#1677b8" stroke-width="8"/>
+  <rect x="1152" y="96" width="540" height="468" fill="#ffe4d2" stroke="#d66022" stroke-width="8"/>
+  <rect x="1152" y="636" width="540" height="468" fill="#e1f5dc" stroke="#3d9441" stroke-width="8"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#17212b">
+    <text x="594" y="570" font-size="52" font-weight="bold">PHOTO 1 — LARGE</text>
+    <text x="594" y="630" font-size="30">x: 90 · y: 96 · 1008 × 1008</text>
+    <text x="1422" y="306" font-size="36" font-weight="bold">PHOTO 2</text>
+    <text x="1422" y="350" font-size="25">x: 1152 · y: 96</text>
+    <text x="1422" y="390" font-size="25">540 × 468</text>
+    <text x="1422" y="846" font-size="36" font-weight="bold">PHOTO 3</text>
+    <text x="1422" y="890" font-size="25">x: 1152 · y: 636</text>
+    <text x="1422" y="930" font-size="25">540 × 468</text>
+    <text x="900" y="54" font-size="28" font-weight="bold">PHOTO BOOTH CANVA PLACEMENT GUIDE — 1800 × 1200 px</text>
+    <text x="900" y="1160" font-size="24">Keep decorations outside colored areas. Delete this guide before exporting your final background.</text>
+  </g>
+</svg>
