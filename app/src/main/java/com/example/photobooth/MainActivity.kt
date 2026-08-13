@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
 import android.widget.*
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
 
@@ -48,8 +49,11 @@ class MainActivity : Activity() {
     private fun chooseBackground() { startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply { type="image/*"; addCategory(Intent.CATEGORY_OPENABLE) }, 20) }
     private fun startSession() { shotIndex=0; status.text="Photo 1 of 3 — camera opens now"; captureNext() }
     private fun captureNext() {
-        val file = File(cacheDir, "booth_${System.currentTimeMillis()}.jpg"); captureUri = Uri.fromFile(file)
-        startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, captureUri), 10)
+        val file = File(cacheDir, "booth_${System.currentTimeMillis()}.jpg")
+        captureUri = FileProvider.getUriForFile(this, "$packageName.files", file)
+        startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            .putExtra(MediaStore.EXTRA_OUTPUT, captureUri)
+            .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION), 10)
     }
     override fun onActivityResult(request: Int, result: Int, data: Intent?) { super.onActivityResult(request,result,data)
         if (result != RESULT_OK) { status.text="Session cancelled"; return }
